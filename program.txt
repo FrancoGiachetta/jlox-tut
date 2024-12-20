@@ -1,0 +1,11 @@
+hola 
+"hola"
+123
+"123"
+for
+while
+true
+false
+class
+
+let var = 1 * (3 + hola)
