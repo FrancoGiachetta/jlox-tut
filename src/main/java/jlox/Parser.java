@@ -3,11 +3,22 @@ package jlox;
 import java.util.List;
 
 public class Parser {
+    private static class ParseError extends RuntimeException {
+    }
+
     private final List<Token> tokens;
     private int current = 0;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
+    }
+
+    public Expr parse() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
     }
 
     private Expr expression() {
@@ -93,6 +104,15 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
+
+        throw error(peek(), "Expected expression");
+    }
+
+    private Token consume(TokenType type, String errorMessage) {
+        if (check(type))
+            return advance();
+
+        throw error(peek(), errorMessage);
     }
 
     private boolean match(TokenType... tokens) {
@@ -123,6 +143,30 @@ public class Parser {
 
     private Token previous() {
         return tokens.get(current - 1);
+    }
+
+    private ParseError error(Token token, String errorMessage) {
+        Lox.error(token.line, errorMessage);
+        return new ParseError();
+    }
+
+    private void synchronize() {
+        while (!isAtEnd()) {
+            if (peek().type == TokenType.SEMICOLON)
+                return;
+
+            switch (peek().type) {
+                case TokenType.CLASS:
+                case TokenType.FUN:
+                case TokenType.FOR:
+                case TokenType.IF:
+                case TokenType.WHILE:
+                    return;
+                default:
+            }
+
+            advance();
+        }
     }
 
     private Token peek() {
