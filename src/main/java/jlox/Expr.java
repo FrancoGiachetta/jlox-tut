@@ -1,18 +1,21 @@
 package jlox;
 
-import java.util.List;
+abstract class Expr {
+    public interface Visitor<R> {
+        R visitBinaryExpr(Binary binOp);
 
-abstract class Expr{
-    interface Visitor<R> {
-        R visitBinaryExpr(Binary expr);
-        R visitGroupingExpr(Grouping expr);
-        R visitLiteralExpr(Literal expr);
-        R visitUnaryExpr(Unary expr);
+        R visitGroupingExpr(Grouping groupOp);
+
+        R visitLiteralExpr(Literal literal);
+
+        R visitUnaryExpr(Unary unaryOp);
     }
+
     public static class Binary extends Expr {
         final Expr left;
         final Token op;
         final Expr right;
+
         public Binary(Expr left, Token op, Expr right) {
             this.left = left;
             this.op = op;
@@ -24,8 +27,10 @@ abstract class Expr{
             return visitor.visitBinaryExpr(this);
         }
     }
+
     public static class Grouping extends Expr {
         final Expr expression;
+
         public Grouping(Expr expression) {
             this.expression = expression;
         }
@@ -35,8 +40,10 @@ abstract class Expr{
             return visitor.visitGroupingExpr(this);
         }
     }
+
     public static class Literal extends Expr {
         final Object value;
+
         public Literal(Object value) {
             this.value = value;
         }
@@ -46,9 +53,11 @@ abstract class Expr{
             return visitor.visitLiteralExpr(this);
         }
     }
+
     public static class Unary extends Expr {
         final Token op;
         final Expr right;
+
         public Unary(Token op, Expr right) {
             this.op = op;
             this.right = right;
@@ -60,5 +69,5 @@ abstract class Expr{
         }
     }
 
-    abstract<R> R accept(Visitor<R> visitor);
+    abstract <R> R accept(Visitor<R> visitor);
 }
