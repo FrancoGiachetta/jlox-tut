@@ -1,18 +1,26 @@
 package jlox;
 
+import java.util.List;
+
 import jlox.Expr.Binary;
 import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Unary;
+import jlox.Stmt.Print;
 
-public class Interpreter implements Expr.Visitor<Object> {
-    public void interpret(Expr expr) {
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    public void interpret(List<Stmt> statements) {
         try {
-            Object value = evaluate(expr);
-            System.out.println(stringify(value));
+            for (Stmt stmt : statements) {
+                execute(stmt);
+            }
         } catch (RuntimeError e) {
             Lox.runtimeError(e);
         }
+    }
+
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
     }
 
     private String stringify(Object obj) {
@@ -26,6 +34,19 @@ public class Interpreter implements Expr.Visitor<Object> {
         }
 
         return obj.toString();
+    }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
     }
 
     @Override
