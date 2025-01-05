@@ -7,5 +7,5 @@
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/tool/GenerateAst.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Parser.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Interpreter.java
-/home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/AstPrinter.java
+/home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Environment.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Lox.java

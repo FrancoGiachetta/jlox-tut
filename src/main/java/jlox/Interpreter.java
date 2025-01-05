@@ -2,13 +2,19 @@ package jlox;
 
 import java.util.List;
 
+import jlox.Expr.Assign;
 import jlox.Expr.Binary;
 import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Unary;
+import jlox.Expr.Variable;
+import jlox.Stmt.Block;
 import jlox.Stmt.Print;
+import jlox.Stmt.Var;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    private Environment env = new Environment();
+
     public void interpret(List<Stmt> statements) {
         try {
             for (Stmt stmt : statements) {
@@ -34,6 +40,46 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
 
         return obj.toString();
+    }
+
+    @Override
+    public Void visitBlockStmt(Block stmt) {
+    	executeBlock(stmt.statements, new Environment(env));
+    	return null;
+    }
+
+    void executeBlock(List<Stmt> statements, Environment env) {
+        Environment previous = this.env;
+
+        try {
+            this.env = env;
+
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.env = previous;
+        }
+    }
+
+    @Override
+    public Void visitVarStmt(Var stmt) {
+        Object value = null;
+
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+
+        env.define(stmt.name.lexeme, value);
+
+        return null;
+    }
+
+    @Override
+    public Object visitAssignExpr(Assign expr) {
+        Object value = evaluate(expr.value);
+        env.assign(expr.name, value);
+        return value;
     }
 
     @Override
@@ -73,6 +119,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
         // Should be unreachable
         return null;
+    }
+
+    @Override
+    public Object visitVariableExpr(Variable expr) {
+        return env.get(expr.name);
     }
 
     private void checkNumberOperand(Token op, Object operand) {
