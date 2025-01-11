@@ -36,7 +36,7 @@
 			    <archive>
 				    <manifest>
 					    <addClasspath>true</addClasspath>
-					    <mainClass>jlox.Lox</mainClass>
+					    <mainClass>jlox.tool.GenerateAst</mainClass>
 				    </manifest>
 			    </archive>
 		    </configuration>

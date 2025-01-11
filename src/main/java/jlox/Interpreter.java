@@ -6,11 +6,14 @@ import jlox.Expr.Assign;
 import jlox.Expr.Binary;
 import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
+import jlox.Expr.Logical;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
+import jlox.Stmt.If;
 import jlox.Stmt.Print;
 import jlox.Stmt.Var;
+import jlox.Stmt.While;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     private Environment env = new Environment();
@@ -44,8 +47,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitBlockStmt(Block stmt) {
-    	executeBlock(stmt.statements, new Environment(env));
-    	return null;
+        executeBlock(stmt.statements, new Environment(env));
+        return null;
     }
 
     void executeBlock(List<Stmt> statements, Environment env) {
@@ -76,6 +79,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitWhileStmt(While stmt) {
+        while (isTruthy(evaluate(stmt.condition)))
+            execute(stmt.body);
+        return null;
+    }
+
+    @Override
     public Object visitAssignExpr(Assign expr) {
         Object value = evaluate(expr.value);
         env.assign(expr.name, value);
@@ -89,6 +99,16 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitIfStmt(If stmt) {
+        if (isTruthy(stmt.condition)) {
+            execute(stmt.thenBranch);
+        } else if (stmt.elseBranch != null) {
+            execute(stmt.elseBranch);
+        }
+        return null;
+    }
+
+    @Override
     public Void visitPrintStmt(Print stmt) {
         Object value = evaluate(stmt.expression);
         System.out.println(stringify(value));
@@ -98,6 +118,21 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitLiteralExpr(Literal literal) {
         return literal.value;
+    }
+
+    @Override
+    public Object visitLogicalExpr(Logical expr) {
+        Object left = evaluate(expr.left);
+
+        if (expr.op.type == TokenType.OR) {
+            if (isTruthy(left))
+                return left;
+        } else {
+            if (!isTruthy(left))
+                return left;
+        }
+
+        return evaluate(expr.right);
     }
 
     @Override

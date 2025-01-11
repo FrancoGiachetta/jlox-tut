@@ -10,6 +10,7 @@ jlox/Expr$Unary.class
 jlox/TokenType.class
 jlox/tool/GenerateAst.class
 jlox/Parser$ParseError.class
+jlox/Stmt$If.class
 jlox/Interpreter.class
 jlox/Expr$Literal.class
 jlox/Interpreter$1.class
@@ -21,6 +22,7 @@ jlox/Scanner.class
 jlox/Stmt$Expression.class
 jlox/Environment.class
 jlox/Stmt$Var.class
+jlox/Expr$Logical.class
 jlox/Stmt$Print.class
 jlox/Parser$1.class
 jlox/Stmt$Block.class
