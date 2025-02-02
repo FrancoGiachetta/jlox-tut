@@ -1,7 +1,9 @@
 jlox/Expr$Variable.class
+jlox/Interpreter$2.class
 jlox/RuntimeError.class
 jlox/Expr$Assign.class
 jlox/Expr.class
+jlox/LoxFunction.class
 jlox/Parser.class
 jlox/Expr$Visitor.class
 jlox/Lox.class
@@ -9,11 +11,15 @@ jlox/Expr$Binary.class
 jlox/Expr$Unary.class
 jlox/TokenType.class
 jlox/tool/GenerateAst.class
+jlox/Stmt$While.class
 jlox/Parser$ParseError.class
 jlox/Stmt$If.class
 jlox/Interpreter.class
+jlox/Stmt$Function.class
 jlox/Expr$Literal.class
+jlox/LoxCallable.class
 jlox/Interpreter$1.class
+jlox/Return.class
 jlox/Token.class
 jlox/Stmt.class
 jlox/Expr$Grouping.class
@@ -21,7 +27,9 @@ jlox/Stmt$Visitor.class
 jlox/Scanner.class
 jlox/Stmt$Expression.class
 jlox/Environment.class
+jlox/Stmt$Return.class
 jlox/Stmt$Var.class
+jlox/Expr$Call.class
 jlox/Expr$Logical.class
 jlox/Stmt$Print.class
 jlox/Parser$1.class

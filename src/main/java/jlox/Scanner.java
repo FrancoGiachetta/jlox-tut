@@ -125,10 +125,7 @@ public class Scanner {
 
         advance();
 
-        String value = "";
-
-        if (current - start < 1)
-            value = source.substring(start + 1, current - 1);
+        String value = source.substring(start + 1, current - 1);
 
         addToken(TokenType.STRING, value);
     }

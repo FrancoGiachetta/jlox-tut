@@ -1,22 +1,45 @@
 package jlox;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import jlox.Expr.Assign;
 import jlox.Expr.Binary;
+import jlox.Expr.Call;
 import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Logical;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
+import jlox.Stmt.Function;
 import jlox.Stmt.If;
 import jlox.Stmt.Print;
+import jlox.Stmt.Return;
 import jlox.Stmt.Var;
 import jlox.Stmt.While;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment env = new Environment();
+    public Environment global = new Environment();
+    private Environment env = global;
+
+    public Interpreter() {
+        global.define("clock", new LoxCallable() {
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                return (double) System.currentTimeMillis() / 1000.0;
+            }
+
+            @Override
+            public String toString() {
+                return "<native fn>";
+            }
+        });
+    }
 
     public void interpret(List<Stmt> statements) {
         try {
@@ -99,8 +122,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitFunctionStmt(Function stmt) {
+        LoxCallable function = new LoxFunction(stmt, this.env);
+        env.define(stmt.name.lexeme, function);
+        return null;
+    }
+
+    @Override
     public Void visitIfStmt(If stmt) {
-        if (isTruthy(stmt.condition)) {
+        if (isTruthy(evaluate(stmt.condition))) {
             execute(stmt.thenBranch);
         } else if (stmt.elseBranch != null) {
             execute(stmt.elseBranch);
@@ -113,6 +143,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object value = evaluate(stmt.expression);
         System.out.println(stringify(value));
         return null;
+    }
+
+    @Override
+    public Void visitReturnStmt(Return stmt) {
+        Object value = null;
+        if (stmt.value != null)
+            value = evaluate(stmt.value);
+
+        throw new jlox.Return(value);
     }
 
     @Override
@@ -176,13 +215,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         switch (binaryOp.op.type) {
             case TokenType.GREATER:
                 checkNumberOperands(binaryOp.op, lhs, rhs);
-                return (double) lhs > (double) rhs;
-            case TokenType.GREATER_EQUAL:
-                return (double) lhs >= (double) rhs;
-            case TokenType.LESS:
                 return (double) lhs < (double) rhs;
-            case TokenType.LESS_EQUAL:
+            case TokenType.GREATER_EQUAL:
                 return (double) lhs <= (double) rhs;
+            case TokenType.LESS:
+                return (double) lhs > (double) rhs;
+            case TokenType.LESS_EQUAL:
+                return (double) lhs >= (double) rhs;
             case TokenType.BANG_EQUAL:
                 return !isEqual(lhs, rhs);
             case TokenType.EQUAL_EQUAL:
@@ -205,6 +244,28 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
         // Should be unreachable
         return null;
+    }
+
+    @Override
+    public Object visitCallExpr(Call expr) {
+        Object calle = evaluate(expr.callee);
+
+        List<Object> arguments = new ArrayList<>();
+
+        for (Expr argument : expr.arguments) {
+            arguments.add(evaluate(argument));
+        }
+
+        if (!(calle instanceof LoxCallable))
+            throw new RuntimeError(expr.paren, "Can only call functions and classes");
+
+        LoxCallable function = (LoxCallable) calle;
+
+        if (arguments.size() != function.arity())
+            throw new RuntimeError(expr.paren,
+                    "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
+
+        return function.call(this, arguments);
     }
 
     private void checkNumberOperands(Token op, Object lhs, Object rhs) {
