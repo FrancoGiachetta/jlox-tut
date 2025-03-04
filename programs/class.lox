@@ -1,0 +1,7 @@
+class DevonshireCream {
+	serveOn(d) {
+		return "Scones";
+	}
+}
+
+print DevonshireCream;

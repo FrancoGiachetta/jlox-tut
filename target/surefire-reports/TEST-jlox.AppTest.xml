@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-23-openjdk/lib"/>
-    <property name="sun.java.command" value="/home/franco/Documents/Projects/Java/jlox-tut/target/surefire/surefirebooter-20250202152842969_3.jar /home/franco/Documents/Projects/Java/jlox-tut/target/surefire 2025-02-02T15-28-42_919-jvmRun1 surefire-20250202152842969_1tmp surefire_0-20250202152842969_2tmp"/>
+    <property name="sun.java.command" value="/home/franco/Documents/Projects/Java/jlox-tut/target/surefire/surefirebooter-20250304133010282_3.jar /home/franco/Documents/Projects/Java/jlox-tut/target/surefire 2025-03-04T13-30-10_231-jvmRun1 surefire-20250304133010282_1tmp surefire_0-20250304133010282_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/franco/Documents/Projects/Java/jlox-tut/target/test-classes:/home/franco/Documents/Projects/Java/jlox-tut/target/classes:/home/franco/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,13 +27,13 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/franco/Documents/Projects/Java/jlox-tut/target/surefire/surefirebooter-20250202152842969_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/franco/Documents/Projects/Java/jlox-tut/target/surefire/surefirebooter-20250304133010282_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="23.0.2"/>
     <property name="user.name" value="franco"/>
     <property name="stdout.encoding" value="UTF-8"/>
     <property name="path.separator" value=":"/>
-    <property name="os.version" value="6.12.8-arch1-1"/>
+    <property name="os.version" value="6.13.5-arch1-1"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>

@@ -5,10 +5,12 @@
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/TokenType.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Parser.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Interpreter.java
+/home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Resolver.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Lox.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Return.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Scanner.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/RuntimeError.java
-/home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/tool/GenerateAst.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/LoxFunction.java
+/home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/tool/GenerateAst.java
+/home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/LoxClass.java
 /home/franco/Documents/Projects/Java/jlox-tut/src/main/java/jlox/Environment.java

@@ -1,7 +1,10 @@
 package jlox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import jlox.Expr.Assign;
 import jlox.Expr.Binary;
 import jlox.Expr.Call;
@@ -11,6 +14,7 @@ import jlox.Expr.Logical;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
+import jlox.Stmt.Class;
 import jlox.Stmt.Function;
 import jlox.Stmt.If;
 import jlox.Stmt.Print;
@@ -21,6 +25,7 @@ import jlox.Stmt.While;
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Environment global = new Environment();
     private Environment env = global;
+    private final Map<Expr, Integer> locals = new HashMap<>();
 
     public Interpreter() {
         global.define("clock", new LoxCallable() {
@@ -55,6 +60,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         stmt.accept(this);
     }
 
+    public void resolve(Expr expr, int depth) {
+        locals.put(expr, depth);
+    }
+
     private String stringify(Object obj) {
         if (obj == null)
             return "nil";
@@ -71,6 +80,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitBlockStmt(Block stmt) {
         executeBlock(stmt.statements, new Environment(env));
+        return null;
+    }
+
+    @Override
+    public Void visitClassStmt(Class stmt) {
+        env.define(stmt.name.lexeme, null);
+        LoxClass klass = new LoxClass(stmt.name.lexeme);
+        env.assign(stmt.name, klass);
         return null;
     }
 
@@ -111,7 +128,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitAssignExpr(Assign expr) {
         Object value = evaluate(expr.value);
-        env.assign(expr.name, value);
+        Integer distance = locals.get(expr);
+
+        if (distance != null)
+            env.assignAt(distance, expr.name, value);
+        else 
+            global.assign(expr.name, value);
+        
         return value;
     }
 
@@ -183,7 +206,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Object visitUnaryExpr(Unary unaryOp) {
         Object rhs = evaluate(unaryOp.right);
 
-        switch (unaryOp.op.type) {
+            switch (unaryOp.op.type) {
             case TokenType.MINUS:
                 checkNumberOperand(unaryOp.op, rhs);
                 return -(double) rhs;
@@ -197,9 +220,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Object visitVariableExpr(Variable expr) {
-        return env.get(expr.name);
+        return lookUpVariable(expr.name, expr);
     }
 
+    private Object lookUpVariable(Token name, Expr expr) {
+        Integer distance = locals.get(expr);
+
+        if (distance != null) {
+            return env.getAt(distance, name.lexeme);
+        } else {
+            return global.get(name);
+        }
+    }
+    
     private void checkNumberOperand(Token op, Object operand) {
         if (operand instanceof Double)
             return;
