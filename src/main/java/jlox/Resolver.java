@@ -8,9 +8,11 @@ import java.util.Stack;
 import jlox.Expr.Assign;
 import jlox.Expr.Binary;
 import jlox.Expr.Call;
+import jlox.Expr.Get;
 import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Logical;
+import jlox.Expr.Set;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
@@ -108,6 +110,12 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitGetExpr(Get expr) {
+        resolve(expr.object);
+        return null;
+    }
+
+    @Override
     public Void visitGroupingExpr(Grouping expr) {
         resolve(expr.expression);
         return null;
@@ -122,6 +130,13 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitLogicalExpr(Logical expr) {
         resolve(expr.left);
         resolve(expr.right);
+        return null;
+    }
+
+    @Override
+    public Void visitSetExpr(Set expr) {
+        resolve(expr.value);
+        resolve(expr.object);
         return null;
     }
 

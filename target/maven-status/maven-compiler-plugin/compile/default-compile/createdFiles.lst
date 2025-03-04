@@ -9,6 +9,8 @@ jlox/Parser.class
 jlox/Lox.class
 jlox/Expr$Visitor.class
 jlox/Expr$Binary.class
+jlox/Expr$Get.class
+jlox/LoxInstance.class
 jlox/Expr$Unary.class
 jlox/TokenType.class
 jlox/tool/GenerateAst.class

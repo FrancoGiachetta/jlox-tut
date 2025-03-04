@@ -8,9 +8,11 @@ import java.util.Map;
 import jlox.Expr.Assign;
 import jlox.Expr.Binary;
 import jlox.Expr.Call;
+import jlox.Expr.Get;
 import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Logical;
+import jlox.Expr.Set;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
@@ -132,9 +134,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
         if (distance != null)
             env.assignAt(distance, expr.name, value);
-        else 
+        else
             global.assign(expr.name, value);
-        
+
         return value;
     }
 
@@ -198,6 +200,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Object visitSetExpr(Set expr) {
+        Object object = evaluate(expr.object);
+
+        if (!(object instanceof LoxInstance))
+            throw new RuntimeError(expr.name, "Only instances have fields.");
+
+        Object value = evaluate(expr.value);
+        ((LoxInstance) object).set(expr.name, value);
+        
+        return value;
+    }
+
+    @Override
     public Object visitGroupingExpr(Grouping groupOp) {
         return evaluate(groupOp.expression);
     }
@@ -206,7 +221,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Object visitUnaryExpr(Unary unaryOp) {
         Object rhs = evaluate(unaryOp.right);
 
-            switch (unaryOp.op.type) {
+        switch (unaryOp.op.type) {
             case TokenType.MINUS:
                 checkNumberOperand(unaryOp.op, rhs);
                 return -(double) rhs;
@@ -232,7 +247,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             return global.get(name);
         }
     }
-    
+
     private void checkNumberOperand(Token op, Object operand) {
         if (operand instanceof Double)
             return;
@@ -299,6 +314,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                     "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
 
         return function.call(this, arguments);
+    }
+
+    @Override
+    public Object visitGetExpr(Get expr) {
+        Object object = evaluate(expr);
+        if (object instanceof LoxInstance)
+            return ((LoxInstance) object).get(expr.name);
+
+        throw new RuntimeError(expr.name, "Only instances have properties");
     }
 
     private void checkNumberOperands(Token op, Object lhs, Object rhs) {
