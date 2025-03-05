@@ -1,9 +1,9 @@
 var a = "global";
 {
-	fun showA(b) {
+	fun showA() {
 		print a;
 	}
-	showA(1);
+	showA();
 	var a = "block";
-	showA(1);
+	showA();
 }

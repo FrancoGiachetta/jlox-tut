@@ -193,16 +193,14 @@ public class Parser {
 
                 parameters.add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
             } while (match(TokenType.COMMA));
-
-            consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters");
-            consume(TokenType.LEFT_BRACE, "Expect '{' before " + kind + " body");
-
-            List<Stmt> body = block();
-
-            return new Stmt.Function(name, parameters, body);
         }
 
-        return null;
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters");
+        consume(TokenType.LEFT_BRACE, "Expect '{' before " + kind + " body");
+
+        List<Stmt> body = block();
+
+        return new Stmt.Function(name, parameters, body);
     }
 
     private List<Stmt> block() {
@@ -355,8 +353,7 @@ public class Parser {
             else if (match(TokenType.DOT)) {
                 Token name = consume(TokenType.IDENTIFIER, "Expected property name after '.'.");
                 expr = new Expr.Get(expr, name);
-            }
-            else
+            } else
                 break;
 
         }

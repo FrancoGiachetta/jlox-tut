@@ -12,6 +12,7 @@ jlox/Expr$Binary.class
 jlox/Expr$Get.class
 jlox/LoxInstance.class
 jlox/Expr$Unary.class
+jlox/Expr$Set.class
 jlox/TokenType.class
 jlox/tool/GenerateAst.class
 jlox/LoxClass.class
