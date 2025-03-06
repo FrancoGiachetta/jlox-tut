@@ -1,7 +1,7 @@
-class DevonshireCream {
-	serveOn(d) {
-		return "Scones";
+class Bacon {
+	eat() {
+		print "Crunch crunch crunch!";
 	}
 }
 
-print DevonshireCream;
+Bacon().eat();

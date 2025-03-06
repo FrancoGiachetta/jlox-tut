@@ -27,7 +27,8 @@ import jlox.Stmt.While;
 
 enum FunctionType {
     NONE,
-    FUNCTION
+    FUNCTION,
+    METHOD,
 }
 
 public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
@@ -50,6 +51,12 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitClassStmt(Class stmt) {
         declare(stmt.name);
+
+        for (Stmt.Function method : stmt.methods) {
+            FunctionType type = FunctionType.FUNCTION.METHOD;
+            resolveFunction(method, type);
+        }
+
         define(stmt.name);
         return null;
     }
