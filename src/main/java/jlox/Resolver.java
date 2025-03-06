@@ -13,6 +13,7 @@ import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Logical;
 import jlox.Expr.Set;
+import jlox.Expr.This;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
@@ -31,10 +32,16 @@ enum FunctionType {
     METHOD,
 }
 
+enum ClassType {
+    NONE,
+    CLASS
+}
+
 public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private FunctionType currentFunction = FunctionType.NONE;
+    private ClassType currentClass = ClassType.NONE;
 
     public Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
@@ -50,12 +57,23 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitClassStmt(Class stmt) {
+        ClassType enclosingClass = currentClass;
+        currentClass = ClassType.CLASS;
+
         declare(stmt.name);
 
+        beginScope();
+
+        scopes.peek().put("this", true);
+
         for (Stmt.Function method : stmt.methods) {
-            FunctionType type = FunctionType.FUNCTION.METHOD;
+            FunctionType type = FunctionType.METHOD;
             resolveFunction(method, type);
         }
+
+        endScope();
+
+        currentClass = enclosingClass;
 
         define(stmt.name);
         return null;
@@ -144,6 +162,15 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitSetExpr(Set expr) {
         resolve(expr.value);
         resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitThisExpr(This expr) {
+        if (currentClass == ClassType.NONE)
+            Lox.Error(expr.keyword, "Can't use 'this' outside of a class");
+
+        resolveLocal(expr, expr.keyword);
         return null;
     }
 

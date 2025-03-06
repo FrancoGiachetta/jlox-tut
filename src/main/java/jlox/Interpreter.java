@@ -13,6 +13,7 @@ import jlox.Expr.Grouping;
 import jlox.Expr.Literal;
 import jlox.Expr.Logical;
 import jlox.Expr.Set;
+import jlox.Expr.This;
 import jlox.Expr.Unary;
 import jlox.Expr.Variable;
 import jlox.Stmt.Block;
@@ -219,6 +220,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         ((LoxInstance) object).set(expr.name, value);
 
         return value;
+    }
+
+    @Override
+    public Object visitThisExpr(This expr) {
+        return lookUpVariable(expr.keyword, expr);
     }
 
     @Override
