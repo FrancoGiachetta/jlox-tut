@@ -30,6 +30,7 @@ enum FunctionType {
     NONE,
     FUNCTION,
     METHOD,
+    INITIALIZER,
 }
 
 enum ClassType {
@@ -68,6 +69,8 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         for (Stmt.Function method : stmt.methods) {
             FunctionType type = FunctionType.METHOD;
+            if (method.name.lexeme.equals("init"))
+                type = FunctionType.INITIALIZER;
             resolveFunction(method, type);
         }
 
@@ -105,7 +108,8 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitReturnStmt(Return stmt) {
         if (currentFunction == FunctionType.NONE)
             Lox.error(stmt.keyword, "Can't return from top-level code.");
-
+        if (currentFunction == FunctionType.INITIALIZER)
+            Lox.error(stmt.keyword, "Can't return a value from an initializer");
         if (stmt.value != null)
             resolve(stmt.value);
         return null;
@@ -168,7 +172,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitThisExpr(This expr) {
         if (currentClass == ClassType.NONE)
-            Lox.Error(expr.keyword, "Can't use 'this' outside of a class");
+            Lox.error(expr.keyword, "Can't use 'this' outside of a class");
 
         resolveLocal(expr, expr.keyword);
         return null;

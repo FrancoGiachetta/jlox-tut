@@ -1,4 +1,5 @@
 jlox/Stmt$Class.class
+jlox/Expr$This.class
 jlox/Expr$Variable.class
 jlox/RuntimeError.class
 jlox/Expr$Assign.class
@@ -27,6 +28,7 @@ jlox/Interpreter$1.class
 jlox/Token.class
 jlox/Return.class
 jlox/FunctionType.class
+jlox/ClassType.class
 jlox/Stmt.class
 jlox/Expr$Grouping.class
 jlox/Stmt$Visitor.class
